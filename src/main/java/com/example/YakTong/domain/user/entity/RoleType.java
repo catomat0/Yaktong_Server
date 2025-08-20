@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter @RequiredArgsConstructor
-public enum Role {
+public enum RoleType {
 
-    PATIENT ("ROLE_PATIENT", "환자"),
-    PHARMACY ("ROLE_PHARMACY", "약국"),
-    HEALTHCENTER ("ROLE_HEALTHCENTER", "보건소")
+    ROLE_PATIENT ("PATIENT", "환자"),
+    ROLE_PHARMACY ("PHARMACY", "약국"),
+    ROLE_HEALTHCENTER ("HEALTHCENTER", "보건소")
     ;
 
     private final String authority;

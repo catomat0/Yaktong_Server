@@ -1,6 +1,6 @@
 package com.example.YakTong.domain.pharmacy.entity;
 
-import com.example.YakTong.domain.user.entity.User;
+import com.example.YakTong.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,6 @@ public class Pharmacy {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
 }
