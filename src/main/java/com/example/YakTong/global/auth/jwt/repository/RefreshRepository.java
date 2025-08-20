@@ -4,6 +4,8 @@ import com.example.YakTong.global.auth.jwt.entity.RefreshEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 public interface RefreshRepository extends JpaRepository<RefreshEntity, Long> {
 
     Boolean existsByRefresh(String refreshToken);
@@ -13,4 +15,8 @@ public interface RefreshRepository extends JpaRepository<RefreshEntity, Long> {
 
     @Transactional
     void deleteByUsername(String username);
+
+    // 특정일 지난 refresh 토큰 삭제
+    @Transactional
+    void deleteByCreatedDateBefore(LocalDateTime createdDate);
 }

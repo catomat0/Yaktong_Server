@@ -1,27 +1,44 @@
 package com.example.YakTong.domain.user.service;
 
+import com.example.YakTong.domain.user.dto.CustomOAuth2User;
 import com.example.YakTong.domain.user.dto.UserRequestDTO;
+import com.example.YakTong.domain.user.dto.UserResponseDTO;
+import com.example.YakTong.domain.user.entity.RoleType;
+import com.example.YakTong.domain.user.entity.SocialProvider;
 import com.example.YakTong.domain.user.entity.UserEntity;
 import com.example.YakTong.domain.user.repository.UserRepository;
+import com.example.YakTong.global.auth.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.example.YakTong.domain.user.entity.RoleType.ROLE_PATIENT;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService extends DefaultOAuth2UserService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     // 자체 로그인 회원 가입 (존재 여부)
     @Transactional(readOnly = true)
@@ -87,13 +104,114 @@ public class UserService implements UserDetailsService {
         return userRepository.save(entity).getId();
     }
 
-    // 자체/소셜 로그인 회원 탈퇴
 
+    // 자체/소셜 로그인 회원 탈퇴
+    @Transactional
+    public void deleteUser(UserRequestDTO dto) throws AccessDeniedException {
+
+        // 본인 및 어드민만 삭제 가능 검증
+        SecurityContext context = SecurityContextHolder.getContext();
+        String sessionUsername = context.getAuthentication().getName();
+        String sessionRole = context.getAuthentication().getAuthorities().iterator().next().getAuthority();
+
+        boolean isOwner = sessionUsername.equals(dto.getUsername());
+        boolean isAdmin = sessionRole.equals(RoleType.ROLE_ADMIN.name());
+
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("본인 혹은 관리자만 삭제할 수 있습니다.");
+        }
+
+        // 유저 제거
+        userRepository.deleteByUsername(dto.getUsername());
+
+        // Refresh 토큰 제거
+        jwtService.removeRefreshUser(dto.getUsername());
+
+    }
 
     // 소셜 로그인 (매 로그인시 : 신규 = 가입, 기존 = 업데이트)
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
+        // 부모 메소드 호출
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+
+        // 데이터
+        Map<String, Object> attributes;
+        List<GrantedAuthority> authorities;
+
+        String username;
+        String role = RoleType.ROLE_PATIENT.name();
+        String email;
+        String nickname;
+
+        // provider 제공자별 데이터 획득 - Naver / Google
+        String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
+
+        if (registrationId.equals(SocialProvider.NAVER.name())) {
+
+            attributes = (Map<String, Object>) oAuth2User.getAttributes().get("response");
+            username = registrationId + "_" + attributes.get("id");
+            email = attributes.get("email").toString();
+            nickname = attributes.get("nickname").toString();
+
+        } else if (registrationId.equals(SocialProvider.GOOGLE.name())) {
+
+            attributes = (Map<String, Object>) oAuth2User.getAttributes();
+            username = registrationId + "_" + attributes.get("sub");
+            email = attributes.get("email").toString();
+            nickname = attributes.get("name").toString();
+
+        } else {
+            throw new OAuth2AuthenticationException("지원하지 않는 소셜 로그인입니다.");
+        }
+
+        // 데이터베이스 조회 -> 존재하면 업데이트, 없으면 신규 가입
+        Optional<UserEntity> entity = userRepository.findByUsernameAndIsSocial(username, true);
+        if (entity.isPresent()) {
+            // role 조회
+            role = entity.get().getRole().name();
+
+            // 기존 유저 업데이트
+            UserRequestDTO dto = new UserRequestDTO();
+            dto.setNickname(nickname);
+            dto.setEmail(email);
+            entity.get().updateUser(dto);
+
+            userRepository.save(entity.get());
+
+        } else {
+
+            // 신규 유저 추가
+            UserEntity newUserEntity = UserEntity.builder()
+                    .username(username)
+                    .password("")
+                    .isLock(false)
+                    .isSocial(true)
+                    .socialProvider(SocialProvider.valueOf(registrationId))
+                    .role(ROLE_PATIENT)
+                    .nickname(nickname)
+                    .email(email)
+                    .build();
+
+            userRepository.save(newUserEntity);
+        }
+
+        authorities = List.of(new SimpleGrantedAuthority(role));
+
+        return new CustomOAuth2User(attributes, authorities, username);
+    }
 
     // 자체/소셜 유저 정보 조회
+    @Transactional(readOnly = true)
+    public UserResponseDTO readUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity entity = userRepository.findByUsernameAndIsLock(username, false)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾을 수 없습니다: " + username));
+
+        return new UserResponseDTO(username, entity.getIsSocial(), entity.getNickname(), entity.getEmail());
+    }
 
 
 }

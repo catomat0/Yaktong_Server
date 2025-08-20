@@ -1,18 +1,15 @@
 package com.example.YakTong.domain.user.controller;
 
 import com.example.YakTong.domain.user.dto.UserRequestDTO;
+import com.example.YakTong.domain.user.dto.UserResponseDTO;
 import com.example.YakTong.domain.user.service.UserService;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -41,8 +38,31 @@ public class UserController {
     }
 
     // 유저 정보
+    @GetMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public UserResponseDTO userMeApi() {
+        return userService.readUser();
+    }
 
     // 유저 수정 (자체 로그인 유저만)
+    @PutMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> updateUserApi(
+            @Validated(UserRequestDTO.updateGroup.class) @RequestBody UserRequestDTO dto
+    ) throws AccessDeniedException {
+        return ResponseEntity
+                .status(200)
+                .body(userService.updateUser(dto));
+    }
 
     // 유저 제거 (자체/소셜)
+    @DeleteMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> deleteUserApi(
+            @Validated(UserRequestDTO.deleteGroup.class) @RequestBody UserRequestDTO dto
+    ) throws AccessDeniedException {
+
+        userService.deleteUser(dto);
+        return ResponseEntity
+                .status(200)
+                .body(true);
+    }
+
 }

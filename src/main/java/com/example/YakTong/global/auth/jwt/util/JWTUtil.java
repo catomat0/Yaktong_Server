@@ -57,7 +57,6 @@ public class JWTUtil {
     }
 
 
-
     // JWT(Access/Refresh) 생성
     public static String createJWT(String username, String role, Boolean isAccess) {
 

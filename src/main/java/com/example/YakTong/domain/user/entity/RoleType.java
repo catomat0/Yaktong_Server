@@ -8,7 +8,8 @@ public enum RoleType {
 
     ROLE_PATIENT ("PATIENT", "환자"),
     ROLE_PHARMACY ("PHARMACY", "약국"),
-    ROLE_HEALTHCENTER ("HEALTHCENTER", "보건소")
+    ROLE_HEALTHCENTER ("HEALTHCENTER", "보건소"),
+    ROLE_ADMIN("ADMIN","관리자")
     ;
 
     private final String authority;
