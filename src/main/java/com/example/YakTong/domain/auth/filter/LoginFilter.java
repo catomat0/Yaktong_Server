@@ -1,4 +1,4 @@
-package com.example.YakTong.global.auth.filter;
+package com.example.YakTong.domain.auth.filter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

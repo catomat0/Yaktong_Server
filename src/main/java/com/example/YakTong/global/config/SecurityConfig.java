@@ -1,10 +1,10 @@
 package com.example.YakTong.global.config;
 
-import com.example.YakTong.domain.user.entity.RoleType;
-import com.example.YakTong.global.auth.filter.JWTFilter;
-import com.example.YakTong.global.auth.filter.LoginFilter;
-import com.example.YakTong.global.auth.handler.RefreshTokenLogoutHandler;
-import com.example.YakTong.global.auth.jwt.service.JwtService;
+import com.example.YakTong.domain.user.entity.UserRole;
+import com.example.YakTong.domain.auth.filter.JWTFilter;
+import com.example.YakTong.domain.auth.filter.LoginFilter;
+import com.example.YakTong.domain.auth.handler.RefreshTokenLogoutHandler;
+import com.example.YakTong.domain.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -88,7 +88,7 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.withRolePrefix("ROLE_")
-                .role(RoleType.ROLE_ADMIN.name()).implies(RoleType.ROLE_PATIENT.name())
+                .role(UserRole.ROLE_ADMIN.name()).implies(UserRole.ROLE_PATIENT.name())
                 .build();
     }
 
@@ -133,9 +133,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/jwt/exchange", "/jwt/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/exist", "/user").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user").hasAuthority(RoleType.ROLE_PATIENT.name())
-                        .requestMatchers(HttpMethod.PUT, "/user").hasAuthority(RoleType.ROLE_PATIENT.name())
-                        .requestMatchers(HttpMethod.DELETE, "/user").hasAuthority(RoleType.ROLE_PATIENT.name())
+                        .requestMatchers(HttpMethod.GET, "/user").hasAuthority(UserRole.ROLE_PATIENT.name())
+                        .requestMatchers(HttpMethod.PUT, "/user").hasAuthority(UserRole.ROLE_PATIENT.name())
+                        .requestMatchers(HttpMethod.DELETE, "/user").hasAuthority(UserRole.ROLE_PATIENT.name())
                         .anyRequest().authenticated()
                 );
 

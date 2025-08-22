@@ -3,11 +3,11 @@ package com.example.YakTong.domain.user.service;
 import com.example.YakTong.domain.user.dto.CustomOAuth2User;
 import com.example.YakTong.domain.user.dto.UserRequestDTO;
 import com.example.YakTong.domain.user.dto.UserResponseDTO;
-import com.example.YakTong.domain.user.entity.RoleType;
+import com.example.YakTong.domain.user.entity.UserRole;
 import com.example.YakTong.domain.user.entity.SocialProvider;
 import com.example.YakTong.domain.user.entity.UserEntity;
 import com.example.YakTong.domain.user.repository.UserRepository;
-import com.example.YakTong.global.auth.jwt.service.JwtService;
+import com.example.YakTong.domain.auth.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.example.YakTong.domain.user.entity.RoleType.ROLE_PATIENT;
+import static com.example.YakTong.domain.user.entity.UserRole.ROLE_PATIENT;
 
 @Service
 @RequiredArgsConstructor
@@ -115,7 +115,7 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
         String sessionRole = context.getAuthentication().getAuthorities().iterator().next().getAuthority();
 
         boolean isOwner = sessionUsername.equals(dto.getUsername());
-        boolean isAdmin = sessionRole.equals(RoleType.ROLE_ADMIN.name());
+        boolean isAdmin = sessionRole.equals(UserRole.ROLE_ADMIN.name());
 
         if (!isOwner && !isAdmin) {
             throw new AccessDeniedException("본인 혹은 관리자만 삭제할 수 있습니다.");
@@ -141,7 +141,7 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
         List<GrantedAuthority> authorities;
 
         String username;
-        String role = RoleType.ROLE_PATIENT.name();
+        String role = UserRole.ROLE_PATIENT.name();
         String email;
         String nickname;
 

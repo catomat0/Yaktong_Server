@@ -1,4 +1,4 @@
-package com.example.YakTong.global.auth.jwt.dto;
+package com.example.YakTong.domain.auth.jwt.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

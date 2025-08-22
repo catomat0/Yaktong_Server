@@ -1,6 +1,6 @@
-package com.example.YakTong.global.auth.jwt.repository;
+package com.example.YakTong.domain.auth.jwt.repository;
 
-import com.example.YakTong.global.auth.jwt.entity.RefreshEntity;
+import com.example.YakTong.domain.auth.jwt.entity.RefreshEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

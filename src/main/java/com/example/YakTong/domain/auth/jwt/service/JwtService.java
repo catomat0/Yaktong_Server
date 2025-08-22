@@ -1,10 +1,10 @@
-package com.example.YakTong.global.auth.jwt.service;
+package com.example.YakTong.domain.auth.jwt.service;
 
-import com.example.YakTong.global.auth.jwt.dto.JWTResponseDTO;
-import com.example.YakTong.global.auth.jwt.dto.RefreshRequestDTO;
-import com.example.YakTong.global.auth.jwt.entity.RefreshEntity;
-import com.example.YakTong.global.auth.jwt.repository.RefreshRepository;
-import com.example.YakTong.global.auth.jwt.util.JWTUtil;
+import com.example.YakTong.domain.auth.jwt.dto.JWTResponseDTO;
+import com.example.YakTong.domain.auth.jwt.dto.RefreshRequestDTO;
+import com.example.YakTong.domain.auth.jwt.entity.RefreshEntity;
+import com.example.YakTong.domain.auth.jwt.repository.RefreshRepository;
+import com.example.YakTong.domain.auth.jwt.JWTProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,18 +46,18 @@ public class JwtService {
         }
 
         // Refresh 토큰 검증
-        Boolean isValid = JWTUtil.isValid(refreshToken, false);
+        Boolean isValid = JWTProvider.isValid(refreshToken, false);
         if (!isValid) {
             throw new RuntimeException("유효하지 않은 refreshToken입니다.");
         }
 
         // 정보 추출
-        String username = JWTUtil.getUsername(refreshToken);
-        String role = JWTUtil.getRole(refreshToken);
+        String username = JWTProvider.getUsername(refreshToken);
+        String role = JWTProvider.getRole(refreshToken);
 
         // 토큰 생성
-        String newAccessToken = JWTUtil.createJWT(username, role, true);
-        String newRefreshToken = JWTUtil.createJWT(username, role, false);
+        String newAccessToken = JWTProvider.createJWT(username, role, true);
+        String newRefreshToken = JWTProvider.createJWT(username, role, false);
 
         // 기존 Refresh 토큰 DB 삭제 후 신규 추가
         RefreshEntity newRefreshEntity = RefreshEntity.builder()
@@ -88,18 +88,18 @@ public class JwtService {
         String refreshToken = dto.getRefreshToken();
 
         // Refresh 토큰 검증
-        Boolean isValid = JWTUtil.isValid(refreshToken, false);
+        Boolean isValid = JWTProvider.isValid(refreshToken, false);
         if (!isValid) {
             throw new RuntimeException("유효하지 않은 refreshToken입니다.");
         }
 
         // 정보 추출
-        String username = JWTUtil.getUsername(refreshToken);
-        String role = JWTUtil.getRole(refreshToken);
+        String username = JWTProvider.getUsername(refreshToken);
+        String role = JWTProvider.getRole(refreshToken);
 
         // 토큰 생성
-        String newAccessToken = JWTUtil.createJWT(username, role, true);
-        String newRefreshToken = JWTUtil.createJWT(username, role, false);
+        String newAccessToken = JWTProvider.createJWT(username, role, true);
+        String newRefreshToken = JWTProvider.createJWT(username, role, false);
 
         // 기존 Refresh 토큰 DB 삭제 후 신규 추가
         RefreshEntity newRefreshEntity = RefreshEntity.builder()

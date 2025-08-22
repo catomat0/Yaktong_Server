@@ -1,4 +1,4 @@
-package com.example.YakTong.global.auth.jwt.entity;
+package com.example.YakTong.domain.auth.jwt.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.YakTong.global.config;
 
-import com.example.YakTong.global.auth.jwt.repository.RefreshRepository;
+import com.example.YakTong.domain.auth.jwt.repository.RefreshRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
-package com.example.YakTong.global.auth.handler;
+package com.example.YakTong.domain.auth.handler;
 
-import com.example.YakTong.global.auth.jwt.service.JwtService;
-import com.example.YakTong.global.auth.jwt.util.JWTUtil;
+import com.example.YakTong.domain.auth.jwt.service.JwtService;
+import com.example.YakTong.domain.auth.jwt.JWTProvider;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +36,7 @@ public class RefreshTokenLogoutHandler implements LogoutHandler {
             if (refreshToken == null) {
                 return;
             }
-            Boolean isValid = JWTUtil.isValid(refreshToken, false);
+            Boolean isValid = JWTProvider.isValid(refreshToken, false);
             if (!isValid) {
                 return;
             }

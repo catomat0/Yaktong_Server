@@ -1,8 +1,8 @@
-package com.example.YakTong.global.auth.jwt.controller;
+package com.example.YakTong.domain.auth.jwt.controller;
 
-import com.example.YakTong.global.auth.jwt.dto.JWTResponseDTO;
-import com.example.YakTong.global.auth.jwt.dto.RefreshRequestDTO;
-import com.example.YakTong.global.auth.jwt.service.JwtService;
+import com.example.YakTong.domain.auth.jwt.dto.JWTResponseDTO;
+import com.example.YakTong.domain.auth.jwt.dto.RefreshRequestDTO;
+import com.example.YakTong.domain.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;

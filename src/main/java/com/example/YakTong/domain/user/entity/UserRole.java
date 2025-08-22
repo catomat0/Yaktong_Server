@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter @RequiredArgsConstructor
-public enum RoleType {
+public enum UserRole {
 
     ROLE_PATIENT ("PATIENT", "환자"),
     ROLE_PHARMACY ("PHARMACY", "약국"),

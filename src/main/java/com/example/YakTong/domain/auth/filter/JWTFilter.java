@@ -1,6 +1,6 @@
-package com.example.YakTong.global.auth.filter;
+package com.example.YakTong.domain.auth.filter;
 
-import com.example.YakTong.global.auth.jwt.util.JWTUtil;
+import com.example.YakTong.domain.auth.jwt.JWTProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,10 +34,10 @@ public class JWTFilter extends OncePerRequestFilter {
         // 토큰 파싱
         String accessToken = authorization.split(" ")[1];
 
-        if (JWTUtil.isValid(accessToken, true)) {
+        if (JWTProvider.isValid(accessToken, true)) {
 
-            String username = JWTUtil.getUsername(accessToken);
-            String role = JWTUtil.getRole(accessToken);
+            String username = JWTProvider.getUsername(accessToken);
+            String role = JWTProvider.getRole(accessToken);
 
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
