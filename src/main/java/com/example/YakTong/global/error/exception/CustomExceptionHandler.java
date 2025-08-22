@@ -1,5 +1,6 @@
 package com.example.YakTong.global.error.exception;
 
+import com.example.YakTong.global.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -8,6 +9,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ApiResponse> handleBusinessException(CustomException e) {
+
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.fail(e.getErrorCode()));
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
