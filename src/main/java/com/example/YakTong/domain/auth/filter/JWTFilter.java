@@ -36,7 +36,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (JWTProvider.isValid(accessToken, true)) {
 
-            String username = JWTProvider.getUsername(accessToken);
+            String username = JWTProvider.getLoginId(accessToken);
             String role = JWTProvider.getRole(accessToken);
 
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));

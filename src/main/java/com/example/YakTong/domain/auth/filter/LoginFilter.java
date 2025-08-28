@@ -25,14 +25,14 @@ import java.util.Map;
 
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
-    public static final String SPRING_SECURITY_FORM_USERNAME_KEY = "username";
+    public static final String SPRING_SECURITY_FORM_USERNAME_KEY = "loginId";
 
     public static final String SPRING_SECURITY_FORM_PASSWORD_KEY = "password";
 
     private static final RequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = PathPatternRequestMatcher.withDefaults()
             .matcher(HttpMethod.POST, "/login");
 
-    private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
+    private String loginIdParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
 
     private String passwordParameter = SPRING_SECURITY_FORM_PASSWORD_KEY;
 
@@ -63,12 +63,12 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
             throw new RuntimeException(e);
         }
 
-        String username = loginMap.get(usernameParameter);
-        username = (username != null) ? username.trim() : "";
+        String loginId = loginMap.get(loginIdParameter);
+        loginId = (loginId != null) ? loginId.trim() : "";
         String password = loginMap.get(passwordParameter);
         password = (password != null) ? password : "";
 
-        UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(username,
+        UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(loginId,
                 password);
         setDetails(request, authRequest);
         return this.getAuthenticationManager().authenticate(authRequest);

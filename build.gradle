@@ -30,6 +30,12 @@ dependencies {
     // Database
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    // AWS S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.772'  // 최신 1.x 안정버전
+
+    // (선택) Spring Cloud AWS 사용 시
+    // implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 

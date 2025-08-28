@@ -88,9 +88,9 @@ public class JWTProvider {
     private static SecretKey secretKey;
 
     public JWTProvider(
-            @Value("${JWT_SECRET}") String secretKeyString,
-            @Value("${JWT_ACCESS_MS}") Long accessTokenExpiresIn,
-            @Value("${JWT_REFRESH_MS}") Long refreshTokenExpiresIn
+            @Value("${jwt.secret}") String secretKeyString,
+            @Value("${jwt.access-token-validity}") Long accessTokenExpiresIn,
+            @Value("${jwt.refresh-token-validity}") Long refreshTokenExpiresIn
     ) {
         this.secretKeyString = secretKeyString;
         this.accessTokenExpiresIn = accessTokenExpiresIn;
@@ -106,7 +106,7 @@ public class JWTProvider {
     }
 
     // JWT 클레임 username 파싱
-    public static String getUsername(String token) {
+    public static String getLoginId(String token) {
         return Jwts.parser().verifyWith(secretKey).build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -143,13 +143,13 @@ public class JWTProvider {
     }
 
     // JWT(Access/Refresh) 생성
-    public static String createJWT(String username, String role, Boolean isAccess) {
+    public static String createJWT(String loginId, String role, Boolean isAccess) {
         long now = System.currentTimeMillis();
         long expiry = isAccess ? accessTokenExpiresIn : refreshTokenExpiresIn;
         String type = isAccess ? "access" : "refresh";
 
         return Jwts.builder()
-                .claim("sub", username)
+                .claim("sub", loginId)
                 .claim("role", role)
                 .claim("type", type)
                 .issuedAt(new Date(now))

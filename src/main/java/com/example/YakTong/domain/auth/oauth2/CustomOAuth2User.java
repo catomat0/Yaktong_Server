@@ -1,4 +1,4 @@
-package com.example.YakTong.domain.user.dto;
+package com.example.YakTong.domain.auth.oauth2;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;

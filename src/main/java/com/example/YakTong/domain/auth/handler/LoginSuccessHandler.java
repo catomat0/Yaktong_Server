@@ -24,15 +24,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         // username, role
-        String username =  authentication.getName();
+        String loginId =  authentication.getName();
         String role = authentication.getAuthorities().iterator().next().getAuthority();
 
         // JWT(Access/Refresh) 발급
-        String accessToken = JWTProvider.createJWT(username, role, true);
-        String refreshToken = JWTProvider.createJWT(username, role, false);
+        String accessToken = JWTProvider.createJWT(loginId, role, true);
+        String refreshToken = JWTProvider.createJWT(loginId, role, false);
 
         // 발급한 Refresh DB 테이블 저장 (Refresh whitelist)
-        jwtService.addRefresh(username, refreshToken);
+        jwtService.addRefresh(loginId, refreshToken);
 
         // 응답
         response.setContentType("application/json");

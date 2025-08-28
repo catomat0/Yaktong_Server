@@ -1,11 +1,11 @@
 package com.example.YakTong.global.config;
 
-import com.example.YakTong.domain.user.entity.UserRole;
 import com.example.YakTong.domain.auth.filter.JWTFilter;
 import com.example.YakTong.domain.auth.filter.LoginFilter;
 import com.example.YakTong.domain.auth.handler.RefreshTokenLogoutHandler;
 import com.example.YakTong.domain.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +30,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static com.example.YakTong.domain.auth.user.entity.RoleType.*;
+
 @Configuration
 @EnableWebSecurity
+//@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -85,10 +88,11 @@ public class SecurityConfig {
     }
 
     // 권한 계층
-    @Bean
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.withRolePrefix("ROLE_")
-                .role(UserRole.ROLE_ADMIN.name()).implies(UserRole.ROLE_PATIENT.name())
+                .role(ROLE_ADMIN.name()).implies(ROLE_MEMBER.name())
+                .role(ROLE_ADMIN.name()).implies(ROLE_PHARMACY.name())
+                .role(ROLE_ADMIN.name()).implies(ROLE_HEALTHCENTER.name())
                 .build();
     }
 
@@ -131,13 +135,24 @@ public class SecurityConfig {
         // 인가
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/jwt/exchange", "/jwt/refresh").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/exist", "/user").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user").hasAuthority(UserRole.ROLE_PATIENT.name())
-                        .requestMatchers(HttpMethod.PUT, "/user").hasAuthority(UserRole.ROLE_PATIENT.name())
-                        .requestMatchers(HttpMethod.DELETE, "/user").hasAuthority(UserRole.ROLE_PATIENT.name())
+                        .requestMatchers("/jwt/exchange", "/jwt/refresh").permitAll() // 토큰 인증
+                        .requestMatchers("/admin/**").hasAuthority(ROLE_ADMIN.name()) // 운영 전용
+                        .requestMatchers(HttpMethod.POST, "/api/v1/user/**").permitAll() // 자체 회원 가입
                         .anyRequest().authenticated()
                 );
+
+        // S3 이미지 업로드 인가
+        http.authorizeHttpRequests(auth -> auth
+                // 업로드: 로그인 + 특정 롤만 허용
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/image/upload")
+                .hasAnyAuthority(
+                        ROLE_MEMBER.name(),
+                        ROLE_PHARMACY.name(),
+                        ROLE_HEALTHCENTER.name()
+                        // RoleType.ROLE_ADMIN.name()  // 관리자 롤을 쓰면 추가 (혹은 계층 연결 시 자동 허용)
+                )
+                .anyRequest().authenticated()
+        );
 
         // 예외 처리
         http

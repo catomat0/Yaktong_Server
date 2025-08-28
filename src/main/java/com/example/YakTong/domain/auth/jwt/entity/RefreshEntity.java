@@ -22,8 +22,8 @@ public class RefreshEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false)
-    private String username;
+    @Column(name = "login_id", nullable = false)
+    private String loginId;
 
     @Column(name = "refresh", nullable = false, length = 512)
     private String refresh;
@@ -31,6 +31,5 @@ public class RefreshEntity {
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;
-
 
 }

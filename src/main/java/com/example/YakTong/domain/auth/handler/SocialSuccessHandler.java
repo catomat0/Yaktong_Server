@@ -27,14 +27,14 @@ public class SocialSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         // username, role
-        String username =  authentication.getName();
+        String loginId =  authentication.getName();
         String role = authentication.getAuthorities().iterator().next().getAuthority();
 
         // JWT(Refresh) 발급
-        String refreshToken = JWTProvider.createJWT(username, role, false);
+        String refreshToken = JWTProvider.createJWT(loginId, role, false);
 
         // 발급한 Refresh DB 테이블 저장 (Refresh whitelist)
-        jwtService.addRefresh(username, refreshToken);
+        jwtService.addRefresh(loginId, refreshToken);
 
         // 응답
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);

@@ -1,4 +1,4 @@
-package com.example.YakTong.domain.user.entity;
+package com.example.YakTong.domain.auth.oauth2;
 
 public enum SocialProvider {
 
