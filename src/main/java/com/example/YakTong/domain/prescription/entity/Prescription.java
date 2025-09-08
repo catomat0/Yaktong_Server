@@ -20,19 +20,31 @@ public class Prescription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne()
-    private Long pharmacyId;
+    // 처방전 이미지 S3
+    @Column(length = 500)
+    private String imageKey;
 
-    @ManyToOne(fetch = FetchType.LAZY)   // 반드시 선언해야 JPA가 관계 인식
-    @JoinColumn(name = "member_id")
+    /** 비고/메모 */
+    @Column(length = 500)
+    private String note;
+
+
+    // ============= 매핑 필드 =============
+
+    // 멤버는 여러 처방전 보유
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
+    @Setter
     private Member member;
 
+    // 처방 약품 - 처방전 다대다 매핑
     @ManyToMany
     @JoinTable(
             name = "prescription_medicine",
             joinColumns = @JoinColumn(name = "prescription_id"),
             inverseJoinColumns = @JoinColumn(name = "medicine_id")
     )
+    @Builder.Default
     private List<Medicine> medicines = new ArrayList<>();
 
 }

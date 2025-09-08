@@ -1,12 +1,16 @@
 package com.example.YakTong.domain.pharmacy.entity;
 
-import com.example.YakTong.domain.healthCenter.entity.HealthCenter;
 import com.example.YakTong.domain.auth.user.entity.UserEntity;
+import com.example.YakTong.domain.healthCenter.entity.HealthCenter;
+import com.example.YakTong.domain.pharmacy.history.entity.History;
+import com.example.YakTong.domain.pharmacy.inventory.entity.Inventory;
 import com.example.YakTong.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -35,12 +39,24 @@ public class Pharmacy extends BaseEntity {
     private String latitude;           // 위도
     private String longitude;          // 경도
 
-    /* 역방향 (FK 없음) - User 1:1 */
+
+    /// 매핑 필드
+
+    // User 1:1
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "pharmacy")
     @Setter(AccessLevel.PACKAGE)
     private UserEntity user;
 
-    /* 보건소 매핑 (N:1) */
+    // 약국 - 재고 매핑
+    @OneToMany(mappedBy = "pharmacy", orphanRemoval = false)
+    private List<History> histories = new ArrayList<>();
+
+    // 약국 - 재고 이력 매핑
+    @OneToMany(mappedBy = "pharmacy", orphanRemoval = false)
+    private List<Inventory> inventories = new ArrayList<>();
+
+
+    // 보건소 매핑 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "health_center_id")
     private HealthCenter healthCenter;

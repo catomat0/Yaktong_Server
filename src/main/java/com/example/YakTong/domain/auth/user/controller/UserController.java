@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class UserController {
      * 멤버(일반 사용자) 회원가입
      */
     @PostMapping("/signup/member")
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "일반 사용자 회원가입",
             description = "신규 일반 사용자를 등록합니다."
@@ -46,6 +48,7 @@ public class UserController {
      * 약국 사용자 회원가입
      */
     @PostMapping("/signup/pharmacy")
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "약국 사용자 회원가입",
             description = "신규 약국 사용자를 등록합니다."
@@ -61,6 +64,7 @@ public class UserController {
      * 보건소 사용자 회원가입
      */
     @PostMapping("/signup/healthcenter")
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "보건소 사용자 회원가입",
             description = "신규 보건소 사용자를 등록합니다."

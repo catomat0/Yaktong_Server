@@ -26,12 +26,12 @@ public class HealthCenter {
     private String phone;       // 보건소 대표 전화번호
 
 
-    /* 역방향 (FK 없음) - User 1:1 */
+    // User 1:1 - 매핑
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "healthCenter")
     @Setter(AccessLevel.PACKAGE)
     private UserEntity user;
 
-    /* 보건소 소속 약국들 */
+    // 보건소 소속 약국 매핑
     @OneToMany(mappedBy = "healthCenter", orphanRemoval = false)
     @Builder.Default
     private List<Pharmacy> pharmacies = new ArrayList<>();

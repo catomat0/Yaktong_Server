@@ -5,7 +5,6 @@ import com.example.YakTong.domain.auth.filter.LoginFilter;
 import com.example.YakTong.domain.auth.handler.RefreshTokenLogoutHandler;
 import com.example.YakTong.domain.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

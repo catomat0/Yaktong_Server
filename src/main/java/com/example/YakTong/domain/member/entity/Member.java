@@ -22,4 +22,6 @@ public class Member extends BaseEntity {
     @Setter(AccessLevel.PACKAGE) // UserEntity 편의메서드에서만 세팅
     private UserEntity user;
 
+    
+
 }
