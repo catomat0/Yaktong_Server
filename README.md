@@ -1,7 +1,176 @@
-# YakTong -Server
+<div align="center">
 
-### 약국 재고 관리 시스템
+### YakTong (약통) Back-end Repository ✅
 
-1. 약국 - 의약품 실시간 재고 수정
-2. 환자 - 특정 의약품이 어느 약국에 있는지 검색- 위치 기반으로 가까운 약국 확인 - 실시간 재고 보유 여부 확인
-3. 보건소 - 전국 약국별 의약품 유통·보유 현황 통합 관리- 부족 의약품 또는 과잉 공급 추적
+[![readme](https://img.shields.io/badge/readme.md-important)]()
+[![release](https://img.shields.io/badge/release-v0.1.0-yellow)]()
+<br/>
+[프로젝트 기간-2025.08~진행중)]
+
+</div>
+
+---
+
+## 📝 소개
+
+YakTong(약통)은  
+환자, 약국, 관리자를 연결하는 **약품 재고 조회 및 관리 백엔드 서버**입니다.
+
+환자는 내 주변 약국에서  
+어떤 약을 지금 바로 구할 수 있는지 확인할 수 있고,  
+
+약국은  
+자신의 약품 재고를 직접 관리하여  
+실시간에 가까운 재고 정보를 제공할 수 있습니다.
+
+본 레포지토리는  
+**약통 서비스의 Back-end API 서버**를 담당합니다.
+
+---
+
+## ✨ 현재 구현된 주요 기능 (MVP 기준) 2025/12
+
+### 인증 / 사용자
+- JWT 기반 로그인 / 인증
+- 사용자 Role 구분 (PATIENT, PHARMACY)
+- Access Token / Refresh Token 구조
+
+### 약국
+- 약국 계정 기반 자기 약국 정보 조회
+- 약국 기본 정보 관리
+- 약국별 약품 재고 등록 / 수정 / 조회
+
+### 약품 / 재고
+- 약품 마스터 데이터 기반 재고 관리
+- 약국–약품 재고 관계 모델링
+- 재고 수량 및 상태 관리
+
+### 조회 기능
+- 약국 단위 재고 조회 API
+- 약품 검색을 통한 보유 약국 탐색 (기본 기능)
+
+---
+
+## 🗂️ APIs
+
+현재 단계에서 다음 API들을 우선적으로 개발했습니다.
+
+👉🏻 상세 API 문서는 `/backend/APIs.md` 에 정리되어 있습니다.
+
+### 인증
+- POST `/api/auth/login`
+- POST `/api/auth/refresh`
+
+### 약국
+- GET `/api/pharmacies/me`
+- PATCH `/api/pharmacies/me`
+
+### 재고
+- POST `/api/pharmacies/me/inventories`
+- PATCH `/api/pharmacies/me/inventories/{inventoryId}`
+- GET `/api/pharmacies/me/inventories`
+- GET `/api/pharmacies/{pharmacyId}/inventories`
+
+### 약품
+- GET `/api/drugs/search`
+
+---
+
+## ⚙ 기술 스택
+
+### Back-end
+- Java 17
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- OAuth2
+- JWT
+
+### Database
+- MySQL
+- Redis
+
+### Infra
+- Docker
+- AWS EC2
+- AWS S3
+
+### Tools
+- IntelliJ IDEA
+- GitHub
+- Swagger (OpenAPI)
+
+---
+
+## 🛠️ 프로젝트 아키텍처
+
+### 설계 원칙
+- **Domain 중심 패키지 구조**
+- 인증/공통 로직은 global 레이어로 분리
+- 확장성을 고려한 역할 기반 인가 구조
+
+```text
+YakTong/
+│
+├── 📦 domain/
+│   │
+│   ├── 📂 auth/                          ✅ 완성
+│   │   ├── jwt/
+│   │   │   ├── controller/
+│   │   │   ├── service/
+│   │   │   ├── repository/
+│   │   │   ├── entity/
+│   │   │   └── dto/
+│   │   │
+│   │   ├── user/
+│   │   │   ├── controller/
+│   │   │   ├── service/
+│   │   │   ├── repository/
+│   │   │   ├── entity/
+│   │   │   ├── exception/
+│   │   │   └── dto/
+│   │   │       ├── request/
+│   │   │       └── response/
+│   │   │
+│   │   ├── filter/
+│   │   ├── handler/
+│   │   └── oauth2/
+│   │
+│   ├── 📂 member/                        🚧 엔티티만
+│   │   ├── controller/                  (미구현)
+│   │   ├── service/                     (미구현)
+│   │   ├── repository/
+│   │   └── entity/
+│   │
+│   ├── 📂 pharmacy/                      🚧 엔티티만
+│   │   ├── controller/                  (미구현)
+│   │   ├── service/                     (미구현)
+│   │   ├── repository/
+│   │   ├── entity/
+│   │   │
+│   │   ├── inventory/                   (재고 서브도메인)
+│   │   │   ├── controller/              (미구현)
+│   │   │   ├── service/                 (미구현)
+│   │   │   ├── repository/
+│   │   │   └── entity/
+│   │   │
+│   │   └── history/                     (재고 이력 서브도메인)
+│   │       ├── controller/              (미구현)
+│   │       ├── service/                 (미구현)
+│   │       ├── repository/
+│   │       └── entity/
+│   │
+│   ├── 📂 healthCenter/                  🚧 엔티티만
+│   │   ├── controller/                  (미구현)
+│   │   ├── service/                     (미구현)
+│   │   ├── repository/
+│   │   └── entity/
+│   │
+│   ├── 📂 medicine/                      🚧 엔티티만
+│   │   ├── controller/                  (미구현)
+│   │   ├── service/                     (미구현)
+│   │   ├── repository/
+│   │   └── entity/
+│
+└── YakTongApplication
+
